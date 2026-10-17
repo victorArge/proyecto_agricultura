@@ -1,0 +1,231 @@
+:root {
+  --color-primary: #2f7d32;
+  --color-primary-dark: #1e5a21;
+  --color-primary-soft: #e8f4e8;
+  --color-accent: #7cb342;
+  --color-text: #1f2a24;
+  --color-text-muted: #5c6b60;
+  --color-border: #dce7dd;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f4f8f3;
+  --color-danger: #c0392b;
+  --color-danger-soft: #fbeae8;
+  --shadow-sm: 0 1px 3px rgba(31, 42, 36, 0.08);
+  --shadow-md: 0 10px 24px rgba(31, 42, 36, 0.1);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --shadow-focus: 0 0 0 3px rgba(47, 125, 50, 0.25);
+  --container-width: 1120px;
+  --font-sans: 'Segoe UI', 'Helvetica Neue', Arial, system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Utilidades ------------------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.link {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.btn--outline {
+  background-color: transparent;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn--outline:hover {
+  background-color: var(--color-primary-soft);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.badge--success {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+}
+
+.badge--danger {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.badge--soft {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+}
+
+.badge--muted {
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.section {
+  padding: 3.5rem 0;
+}
+
+.section--muted {
+  background-color: var(--color-surface-muted);
+}
+
+.section__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.section__title {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.field {
+  display: block;
+}
+
+.field__label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
