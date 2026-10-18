@@ -12,37 +12,30 @@ de empresas. La plataforma actúa como intermediaria y cobra una comisión por c
 | ------------- | -------------------------------------------- |
 | Frontend      | React + Vite + React Router (JavaScript)     |
 | Backend       | Node.js + Express (API REST)                 |
-| Base de datos | PostgreSQL + Prisma ORM *(Etapa 2)*          |
+| Base de datos | PostgreSQL + Prisma ORM                     |
 | Entorno       | dotenv                                       |
 | Herramientas  | Git, Postman                                 |
 
 ## Estado actual
 
-Etapa 1 completada: estructura base, backend con datos de demostración en memoria y frontend con
-catálogo funcionando. La persistencia con PostgreSQL/Prisma se implementará en la Etapa 2.
-
-Endpoints disponibles:
-
-- `GET /api/health`
-- `GET /api/cursos` (filtros opcionales: `?categoria=` y `?search=`)
-- `GET /api/cursos/:id`
+Etapa 2 completada: base de datos PostgreSQL + Prisma, esquema con relaciones, migración inicial, seed con datos de demostración y backend consumiendo la base de datos. Endpoints: `GET /api/health`, `GET /api/cursos`, `GET /api/cursos/:id`.
 
 ## Requisitos
 
 - Node.js 18 o superior
 - npm 9 o superior
-- PostgreSQL (solo a partir de la Etapa 2)
+- PostgreSQL 14+ (instalado y corriendo)
 
 ## Puesta en marcha
-
-Instala las dependencias de cada carpeta y arranca ambos servidores en terminales separadas.
 
 ### Backend
 
 ```bash
 cd backend
 npm install
-copy .env.example .env    # En Windows. En Linux/macOS: cp .env.example .env
+copy .env.example .env    # Configura DATABASE_URL con tus credenciales
+npm run db:migrate        # Aplica la migración inicial
+npm run db:seed           # Crea datos de demostración (opcional si ya los tienes)
 npm run dev               # http://localhost:4000
 ```
 
@@ -51,43 +44,59 @@ npm run dev               # http://localhost:4000
 ```bash
 cd frontend
 npm install
-copy .env.example .env    # En Windows. En Linux/macOS: cp .env.example .env
+copy .env.example .env
 npm run dev               # http://localhost:5173
 ```
 
-El frontend consume la API mediante la variable `VITE_API_URL` (por defecto `http://localhost:4000/api`).
+## Scripts útiles
+
+**Backend**
+
+| Comando | Descripción |
+| --- | --- |
+| `npm run dev` | Arranca el servidor con recarga automática |
+| `npm run start` | Arranca el servidor en producción |
+| `npm run db:generate` | Genera el cliente de Prisma |
+| `npm run db:migrate` | Crea/aplica migraciones en modo desarrollo |
+| `npm run db:seed` | Ejecuta el archivo de semillas |
+| `npm run db:studio` | Abre Prisma Studio |
+| `npm run db:reset` | Restablece la base de datos (elimina y vuelve a sembrar) |
+
+**Frontend**
+
+| Comando | Descripción |
+| --- | --- |
+| `npm run dev` | Servidor de desarrollo (http://localhost:5173) |
+| `npm run build` | Compilación para producción (`dist/`) |
+| `npm run preview` | Previsualiza la compilación |
+| `npm run lint` | Ejecuta Oxlint |
 
 ## Estructura
 
 ```
 Proyecto_Agricultura/
 ├── frontend/     Aplicación React (Vite)
-├── backend/      API REST (Express)
-├── PROJECT_CONTEXT.md   Contexto y hoja de ruta del proyecto
+├── backend/      API REST (Express + Prisma)
+├── PROJECT_CONTEXT.md
 └── README.md
 ```
 
-## Variables de entorno
+## Cuentas de demostración
 
-**backend/.env**
+Tras ejecutar `npm run db:seed` (contraseña: `demo1234`):
 
-| Variable             | Descripción                          | Por defecto             |
-| -------------------- | ------------------------------------ | ----------------------- |
-| `NODE_ENV`           | Entorno de ejecución                 | `development`           |
-| `PORT`               | Puerto del servidor                  | `4000`                  |
-| `CORS_ORIGIN`        | Origen permitido por CORS            | `http://localhost:5173` |
-| `COMMISSION_PERCENT` | Comisión de la plataforma (%)        | `10`                    |
-
-**frontend/.env**
-
-| Variable       | Descripción             | Por defecto                    |
-| -------------- | ----------------------- | ------------------------------ |
-| `VITE_API_URL` | URL base de la API      | `http://localhost:4000/api`    |
+- `admin@agroforma.mx` (ADMIN)
+- `maria.lopez@agroforma.mx` (INSTRUCTOR)
+- `carlos.ramirez@agroforma.mx` (INSTRUCTOR)
+- `laura.gutierrez@agroforma.mx` (INSTRUCTOR)
+- `juan.perez@correo.mx` (STUDENT)
+- `ana.sanchez@correo.mx` (STUDENT)
+- `luis.ramos@correo.mx` (STUDENT)
 
 ## Hoja de ruta
 
-1. **Etapa 1 — Inspección y preparación** *(completada)*
-2. Etapa 2 — Base de datos (PostgreSQL + Prisma)
+1. Etapa 1 — Inspección y preparación *(completada)*
+2. Etapa 2 — Base de datos (PostgreSQL + Prisma) *(completada)*
 3. Etapa 3 — Autenticación y permisos por rol
 4. Etapa 4 — Perfiles de instructor y gestión de cursos
 5. Etapa 5 — Catálogo y experiencia del alumno
@@ -96,5 +105,3 @@ Proyecto_Agricultura/
 8. Etapa 8 — Paneles de instructor y administración
 9. Etapa 9 — Pruebas y seguridad
 10. Etapa 10 — Publicación y documentación
-
-Consulta `PROJECT_CONTEXT.md` para el detalle de cada etapa.

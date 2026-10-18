@@ -1,0 +1,206 @@
+// Esquema de datos de AgroForma
+// Plataforma de capacitaciones presenciales para el sector agrícola.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enumeraciones
+// ---------------------------------------------------------------------------
+
+enum Role {
+  ADMIN
+  INSTRUCTOR
+  STUDENT
+}
+
+enum InstructorStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CourseStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+  ARCHIVED
+}
+
+enum Modality {
+  PRESENCIAL
+}
+
+enum SessionStatus {
+  SCHEDULED
+  CANCELLED
+  COMPLETED
+}
+
+enum EnrollmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+// ---------------------------------------------------------------------------
+// Entidades
+// ---------------------------------------------------------------------------
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  instructorProfile InstructorProfile?
+  enrollments       Enrollment[]
+  payments          Payment[]
+
+  @@map("users")
+}
+
+model InstructorProfile {
+  id              Int              @id @default(autoincrement())
+  userId          Int              @unique
+  headline        String
+  bio             String
+  yearsExperience Int              @default(0)
+  status          InstructorStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courses     Course[]
+  commissions Commission[]
+
+  @@map("instructor_profiles")
+}
+
+model Course {
+  id           Int          @id @default(autoincrement())
+  instructorId Int
+  title        String
+  slug         String       @unique
+  category     String
+  level        String
+  description  String
+  longDescription String
+  price        Decimal      @db.Decimal(10, 2)
+  currency     String       @default("MXN")
+  modality     Modality     @default(PRESENCIAL)
+  status       CourseStatus @default(DRAFT)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  instructor InstructorProfile @relation(fields: [instructorId], references: [id], onDelete: Restrict)
+  sessions   CourseSession[]
+  videos     CourseVideo[]
+
+  @@index([instructorId])
+  @@map("courses")
+}
+
+model CourseSession {
+  id        Int           @id @default(autoincrement())
+  courseId  Int
+  startsAt  DateTime
+  endsAt    DateTime
+  location  String
+  address   String
+  city      String
+  state     String
+  capacity  Int
+  status    SessionStatus @default(SCHEDULED)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+
+  @@map("course_sessions")
+}
+
+model Enrollment {
+  id        Int              @id @default(autoincrement())
+  sessionId Int
+  studentId Int
+  status    EnrollmentStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  session CourseSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  payment Payment?
+
+  @@unique([sessionId, studentId])
+  @@map("enrollments")
+}
+
+model Payment {
+  id           Int           @id @default(autoincrement())
+  enrollmentId Int           @unique
+  payerId      Int
+  amount       Decimal       @db.Decimal(10, 2)
+  currency     String        @default("MXN")
+  method       String        @default("SIMULATED")
+  reference    String        @unique
+  status       PaymentStatus @default(PENDING)
+  paidAt       DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  enrollment Enrollment  @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  payer      User        @relation(fields: [payerId], references: [id], onDelete: Restrict)
+  commission Commission?
+
+  @@map("payments")
+}
+
+model Commission {
+  id               Int      @id @default(autoincrement())
+  paymentId        Int      @unique
+  instructorId     Int
+  grossAmount      Decimal  @db.Decimal(10, 2)
+  percent          Decimal  @db.Decimal(5, 2)
+  commissionAmount Decimal  @db.Decimal(10, 2)
+  netAmount        Decimal  @db.Decimal(10, 2)
+  createdAt        DateTime @default(now())
+
+  payment    Payment           @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  instructor InstructorProfile @relation(fields: [instructorId], references: [id], onDelete: Restrict)
+
+  @@map("commissions")
+}
+
+model CourseVideo {
+  id        Int      @id @default(autoincrement())
+  courseId  Int
+  title     String
+  url       String
+  createdAt DateTime @default(now())
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("course_videos")
+}

@@ -2,19 +2,23 @@ import { getAllCourses, getCourseById, getCategories } from '../services/course.
 import { validateCourseId } from '../validators/course.validator.js';
 import { ApiError } from '../utils/ApiError.js';
 
-export function listCourses(req, res) {
+export async function listCourses(req, res) {
   const { categoria, search } = req.query;
-  const courses = getAllCourses({ category: categoria, search });
+
+  const [courses, categories] = await Promise.all([
+    getAllCourses({ category: categoria, search }),
+    getCategories(),
+  ]);
 
   res.json({
     data: courses,
-    meta: { total: courses.length, categories: getCategories() },
+    meta: { total: courses.length, categories },
   });
 }
 
-export function getCourse(req, res) {
+export async function getCourse(req, res) {
   const id = validateCourseId(req.params.id);
-  const course = getCourseById(id);
+  const course = await getCourseById(id);
 
   if (!course) {
     throw new ApiError(404, `No se encontró el curso con id ${id}.`);
